@@ -34,7 +34,7 @@ app.post("/api/shorturl", (req, res) => {
 });
 
 app.get("/api/shorturl/:shorturl", (req, res) => {
-  res.writeHead(301, {Location: urlDatabase[req.params.shorturl - 1]}).end();
+  res.redirect(urlDatabase[req.params.shorturl - 1]);
 });
 
 app.listen(port, function() {
