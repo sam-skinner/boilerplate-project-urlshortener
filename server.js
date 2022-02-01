@@ -22,19 +22,29 @@ app.get('/api/hello', function(req, res) {
   res.json({ greeting: 'hello API' });
 });
 
-let urlDatabase = [];
+const urlDatabase = [];
 
 app.post("/api/shorturl", (req, res) => {
-  if(req.body.url.slice(0, 8) == "https://") {
-    urlDatabase.push(req.body.url);
-    res.json({original_url: req.body.url, shortUrl: urlDatabase.length});
+  const url = req.body.url;
+
+  if (url === "") return res.json({"error": "invalid url"});
+  
+  if(url.match(/^https?:\/\//)) {
+    urlDatabase.push(url);
+    return res.json(
+      {
+        "original_url": url,
+        "short_url": urlDatabase.length
+      }
+    );
   } else {
-    res.json({error: 'invalid url'});
+    return res.json({"error": "invalid url"});
   }
 });
 
-app.get("/api/shorturl/:shorturl", (req, res) => {
-  res.redirect(urlDatabase[req.params.shorturl - 1]);
+app.get('/api/shorturl/:id', (req, res) => {
+  const id = req.params.id - 1;
+  return urlDatabase[id] ? res.redirect(urlDatabase[id]) :res.json({"error": "invalid URL"});
 });
 
 app.listen(port, function() {
